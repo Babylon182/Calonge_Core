@@ -4,6 +4,8 @@ using UnityEngine;
 
 namespace ObjectsPool
 {
+	//TODO: Usar Zenject para inyectar esta clase en la escena
+	
 	public class GodPool : MonoBehaviour
 	{
 		public static GodPool Instance => instance;
@@ -40,6 +42,11 @@ namespace ObjectsPool
 			poolObject.transform.rotation = intialRotation;
 
 			return poolObject;
+		}
+		
+		public GameObject InstantiatePoolObject(GameObject poolObjectType)
+		{
+			return InstantiatePoolObject(poolObjectType, Vector3.zero, Quaternion.identity);
 		}
 
 		public void ReturnPoolObject(GameObject poolObjectType)

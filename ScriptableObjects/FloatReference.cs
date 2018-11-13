@@ -2,17 +2,28 @@
 using UnityEngine;
 
 [Serializable]
-public class FloatReference  {
-
-    public bool useConstant = true;
-    public float constantValue;
-    public FloatVariable variable;
+public class FloatReference
+{
+    [SerializeField] private bool useConstant = true;
+    [SerializeField] private float constantValue;
+    [SerializeField] private FloatVariable variable;
 
     public float Value
     {
         get
         {
-            return useConstant ? constantValue : variable.value;
+            return useConstant ? constantValue : variable.value;    
+        }
+        set
+        {
+            if (!useConstant)
+            {
+                variable.value = value;
+            }
+            else
+            {
+                constantValue = value;
+            }
         }
     }
 }
