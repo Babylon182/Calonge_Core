@@ -1,15 +1,16 @@
 ﻿﻿﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+  using Object = UnityEngine.Object;
 
 namespace ObjectsPool
 {
 	//TODO: Usar Zenject para inyectar esta clase en la escena
 	
-	public class GodPool : MonoBehaviour
+	public class GodPoolSingleton : MonoBehaviour , IPool
 	{
-		public static GodPool Instance => instance;
-		private static GodPool instance;
+		public static GodPoolSingleton Instance => instance;
+		private static GodPoolSingleton instance;
 		
 		[SerializeField] private PoolAmount[] initialPoolObjects;
 		private Dictionary<string, Stack<PoolObject>> inactivePoolObjects;
@@ -34,7 +35,7 @@ namespace ObjectsPool
 			}
 		}
 
-		public GameObject InstantiatePoolObject(GameObject poolObjectType, Vector3 initialPosition, Quaternion intialRotation)
+		public GameObject Instantiate(GameObject poolObjectType, Vector3 initialPosition, Quaternion intialRotation)
 		{
 			CheckContainers(poolObjectType);
 			GameObject poolObject = GetObjectFromPool(poolObjectType).PoolGameObject;
@@ -44,12 +45,12 @@ namespace ObjectsPool
 			return poolObject;
 		}
 		
-		public GameObject InstantiatePoolObject(GameObject poolObjectType)
+		public GameObject Instantiate(GameObject poolObjectType)
 		{
-			return InstantiatePoolObject(poolObjectType, Vector3.zero, Quaternion.identity);
+			return Instantiate(poolObjectType, Vector3.zero, Quaternion.identity);
 		}
 
-		public void ReturnPoolObject(GameObject poolObjectType)
+		public void Destroy(GameObject poolObjectType)
 		{
 			if (!activePoolObjects.ContainsKey(poolObjectType.name))
 				return;
@@ -76,7 +77,7 @@ namespace ObjectsPool
 			}
 			else
 			{
-				GameObject newGameObject = Instantiate(poolObjectType);
+				GameObject newGameObject = Object.Instantiate(poolObjectType);
 				newGameObject.name = poolObjectType.name;
 				newGameObject.transform.parent = containers[newGameObject.name].transform;
 	
@@ -126,7 +127,7 @@ namespace ObjectsPool
 				CheckContainers(poolGameObject);
 				for (int j = poolAmount.ammount; j > 0; j--)
 				{
-					GameObject newGameObject = Instantiate(poolGameObject, Vector3.zero, Quaternion.identity);
+					GameObject newGameObject = Object.Instantiate(poolGameObject, Vector3.zero, Quaternion.identity);
 					newGameObject.name = poolGameObject.name;
 					newGameObject.transform.parent = containers[newGameObject.name].transform;
 					
@@ -137,53 +138,5 @@ namespace ObjectsPool
 			}
 			initialPoolObjects = null;
 		}
-	}
-
-	public class PoolObject
-	{   
-		private bool isActive;
-		private Action initCallback;
-		private Action disposeCallback;
-
-		public PoolObject(GameObject poolGameObject, Action initCallback, Action disposeCallback)
-		{
-			this.PoolGameObject = poolGameObject;
-			this.initCallback = initCallback;
-			this.disposeCallback = disposeCallback;
-			Id = poolGameObject.GetInstanceID();
-		}
-
-		public GameObject PoolGameObject { get;}
-		public int Id { get;}
-
-		public bool IsActive
-		{
-			get
-			{
-				return isActive;
-			}
-			set 
-			{ 
-				isActive = value;
-
-				if (isActive) 
-					initCallback.Invoke();
-				else 
-					disposeCallback.Invoke();
-			}
-		}
-	}
-
-	[Serializable]
-	public class PoolAmount
-	{
-		public GameObject gameObject;
-		public int ammount;
-	}
-
-	public interface IPoolable
-	{
-		void Init();
-		void Dispose();
 	}
 }
