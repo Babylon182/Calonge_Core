@@ -2,7 +2,7 @@
 using System.Linq;
 using UnityEngine;
 
-namespace Pathfinding
+namespace CalongeCore.Pathfinding
 {
     public static class ThetaSta 
     {

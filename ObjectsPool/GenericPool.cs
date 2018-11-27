@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ObjectsPool
+namespace CalongeCore.ObjectsPool
 {
     public class GenericPool<T>
     {

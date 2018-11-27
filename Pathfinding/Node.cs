@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Pathfinding
+namespace CalongeCore.Pathfinding
 {
     public class Node : MonoBehaviour
     {

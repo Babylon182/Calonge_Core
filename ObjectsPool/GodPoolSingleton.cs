@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
   using Object = UnityEngine.Object;
 
-namespace ObjectsPool
+namespace CalongeCore.ObjectsPool
 {
-	//TODO: Usar Zenject para inyectar esta clase en la escena
-	
 	public class GodPoolSingleton : MonoBehaviour , IPool
 	{
 		public static GodPoolSingleton Instance => instance;
@@ -17,7 +15,7 @@ namespace ObjectsPool
 		private Dictionary<string, Dictionary<int, PoolObject>> activePoolObjects;
 		private Dictionary<string, GameObject> containers;
 
-		private const string CONTAINER = "Container";
+		private const string CONTAINER = " Container";
 		
 		private void Awake()
 		{

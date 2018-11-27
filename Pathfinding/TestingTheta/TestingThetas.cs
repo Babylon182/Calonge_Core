@@ -1,4 +1,4 @@
-﻿using Pathfinding;
+﻿using CalongeCore.Pathfinding;
 using UnityEngine;
 
 public class TestingThetas : MonoBehaviour

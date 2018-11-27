@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
-namespace ObjectsPool
+namespace CalongeCore.ObjectsPool
 {
 	public class GodPoolWithZenject :  IPool
 	{		

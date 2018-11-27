@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace ObjectsPool
+namespace CalongeCore.ObjectsPool
 {
     public class PoolObject
     {   
