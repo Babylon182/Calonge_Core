@@ -11,7 +11,7 @@ namespace CalongeCore.ParticleManager
         [SerializeField]
         private PrefabsDictionary prefabsDictionary;
         
-        private Dictionary<PrefabID, GameObject> dictionary = new Dictionary<PrefabID, GameObject>();
+        private Dictionary<PrefabID, GameObject> allPrefabs = new Dictionary<PrefabID, GameObject>();
 
         protected override void Awake()
         {
@@ -30,18 +30,27 @@ namespace CalongeCore.ParticleManager
             for (int i = prefabsDictionary.dictionary.Length - 1; i >= 0; i--)
             {
                 var currentC = prefabsDictionary.dictionary[i];
-                dictionary.Add(currentC.id, currentC.prefab);
+
+                if (!allPrefabs.ContainsKey(currentC.id))
+                {
+                    allPrefabs.Add(currentC.id, currentC.prefab);
+                }
+                else
+                {
+                    Debug.Log($"<color=red>HEY FUCKER, You already have the key <color=blue>{currentC.id}</color> in the " +
+                              $"Dictionary at index <color=blue>{i}</color>. PLEASE REMOVE IT.</color>");
+                }
             }
         }
 
         private void CreatePrefab(PrefabID id, Vector3 position, Quaternion rotation)
         {
-            GodPoolSingleton.Instance.Instantiate(dictionary[id], position, rotation);
+            GodPoolSingleton.Instance.Instantiate(allPrefabs[id], position, rotation);
         }
         
         private void CreatePrefab(PrefabID id)
         {
-            GodPoolSingleton.Instance.Instantiate(dictionary[id], Vector3.zero, Quaternion.identity);
+            GodPoolSingleton.Instance.Instantiate(allPrefabs[id], Vector3.zero, Quaternion.identity);
         }
     }
 
@@ -61,6 +70,7 @@ namespace CalongeCore.ParticleManager
 
     public enum PrefabID
     {
-        None
+        HeroDeath = 0,
+        EnemyDeath = 1
     }
 }
