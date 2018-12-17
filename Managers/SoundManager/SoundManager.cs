@@ -6,23 +6,17 @@ using CalongeCore.Events;
 namespace CalongeCore.SoundManager
 {
     //TODO HACER MI PROPIO SOUND MANAGER O POR LO MENOS REFACTORIZAR ESTE
-    public class SoundManager : MonoBehaviour
+    public class SoundManager : Singleton<SoundManager>
     {
-        private static SoundManager instance;
-
-        public static SoundManager Instance => instance;
-
         public Sounds[] sounds; //lista de sonidos
         public int channelAmount;
         private Dictionary<SoundID, AudioClip> dictionary = new Dictionary<SoundID, AudioClip>();
         private List<AudioSource> channels = new List<AudioSource>(); //canales de Audio
         private GameObject channelsGo;
 
-        private void Awake()
+        protected override void Awake()
         {
-            if (instance == null) instance = this;
-            else Destroy(this);
-
+            base.Awake();
             EventsManager.SubscribeToEvent<SoundEvent>(StartSound);
             channelsGo = new GameObject("AUDIO CHANNELS");
             channelsGo.transform.parent = transform;

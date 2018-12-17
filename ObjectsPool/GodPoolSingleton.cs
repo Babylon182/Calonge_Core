@@ -5,32 +5,21 @@ using UnityEngine;
 
 namespace CalongeCore.ObjectsPool
 {
-	public class GodPoolSingleton : MonoBehaviour , IPool
+	public class GodPoolSingleton : Singleton<GodPoolSingleton>, IPool
 	{
-		public static GodPoolSingleton Instance => instance;
-		private static GodPoolSingleton instance;
+		[SerializeField] 
+		private PoolAmount[] initialPoolObjects;
 		
-		[SerializeField] private PoolAmount[] initialPoolObjects;
-		private Dictionary<string, Stack<PoolObject>> inactivePoolObjects;
-		private Dictionary<string, Dictionary<int, PoolObject>> activePoolObjects;
-		private Dictionary<string, GameObject> containers;
+		private Dictionary<string, Stack<PoolObject>> inactivePoolObjects = new Dictionary<string, Stack<PoolObject>>();
+		private Dictionary<string, Dictionary<int, PoolObject>> activePoolObjects  = new Dictionary<string, Dictionary<int, PoolObject>>();
+		private Dictionary<string, GameObject> containers = new Dictionary<string, GameObject>();
 
 		private const string CONTAINER = " Container";
-		
-		private void Awake()
+
+		protected override void Awake()
 		{
-			if (instance == null)
-			{
-				instance = this;
-				inactivePoolObjects = new Dictionary<string, Stack<PoolObject>>();
-				activePoolObjects = new Dictionary<string, Dictionary<int, PoolObject>>();
-				containers = new Dictionary<string, GameObject>();
-				CreateInitialPoolObjects();
-			}
-			else
-			{
-				Destroy(this);
-			}
+			base.Awake();
+			CreateInitialPoolObjects();
 		}
 
 		public GameObject Instantiate(GameObject poolObjectType, Vector3 initialPosition, Quaternion intialRotation)

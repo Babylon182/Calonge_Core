@@ -10,29 +10,35 @@ namespace CalongeCore.Events
 		
 		public static void SubscribeToEvent<T>(Action listener) where T : IGameEvent
 		{
-			if (!events.ContainsKey(typeof(T)))
+			var typeOfT = typeof(T);
+			
+			if (!events.ContainsKey(typeOfT))
 			{
-				events.Add(typeof(T), new HashSet<IInvoker>());
+				events.Add(typeOfT, new HashSet<IInvoker>());
 			}
 
-			events[typeof(T)].Add(CreateCallback(listener));
+			events[typeOfT].Add(CreateCallback(listener));
 		}
 		
 		public static void SubscribeToEvent<T>(Action<T> listener) where T : IGameEvent
 		{
-			if (!events.ContainsKey(typeof(T)))
+			var typeOfT = typeof(T);
+
+			if (!events.ContainsKey(typeOfT))
 			{
-				events.Add(typeof(T), new HashSet<IInvoker>());
+				events.Add(typeOfT, new HashSet<IInvoker>());
 			}
 
-			events[typeof(T)].Add(CreateCallback(listener));
+			events[typeOfT].Add(CreateCallback(listener));
 		}
 
 		public static void UnsubscribeToEvent<T>(Action listener) where T : IGameEvent
 		{
-			if (events.ContainsKey(typeof(T)))
+			var typeOfT = typeof(T);
+
+			if (events.ContainsKey(typeOfT))
 			{
-				var hashSet = events[typeof(T)];
+				var hashSet = events[typeOfT];
 				var invokerToRemove = hashSet.SingleOrDefault(x => ((ParameterlessInvoker) x).Handler.Equals(listener));
 
 				if (invokerToRemove != null)
@@ -42,16 +48,18 @@ namespace CalongeCore.Events
 
 				if (hashSet.Count == 0)
 				{
-					events.Remove(typeof(T));
+					events.Remove(typeOfT);
 				}
 			}
 		}
 		
 		public static void UnsubscribeToEvent<T>(Action<T> listener) where T : IGameEvent
 		{
-			if (events.ContainsKey(typeof(T)))
+			var typeOfT = typeof(T);
+
+			if (events.ContainsKey(typeOfT))
 			{
-				var hashSet = events[typeof(T)];
+				var hashSet = events[typeOfT];
 				var invokerToRemove = hashSet.SingleOrDefault(x => ((SpecificInvoker<T>) x).Handler.Equals(listener));
 
 				if (invokerToRemove != null)
@@ -61,7 +69,7 @@ namespace CalongeCore.Events
 
 				if (hashSet.Count == 0)
 				{
-					events.Remove(typeof(T));
+					events.Remove(typeOfT);
 				}
 			}
 		}
