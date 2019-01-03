@@ -1,8 +1,16 @@
-﻿using CalongeCore.ParticleManager;
+﻿using System;
+using CalongeCore.ParticleManager;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "PrefabsDictionary")]
 public class PrefabsDictionary : ScriptableObject
 {
-    public PrefabTuple[] dictionary;
+    public PrefabTuple[] allPrefabsTuples;
+}
+
+[Serializable]
+public struct PrefabTuple
+{
+    public PrefabID id;
+    public GameObject prefab;
 }

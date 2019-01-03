@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using CalongeCore.Events;
+using Events;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -33,9 +34,33 @@ namespace CalongeCore.ScoreManager
 		private void Awake()
 		{
 			EventsManager.SubscribeToEvent<ScoreEvent>(OnScoreEvent);
+			EventsManager.SubscribeToEvent<HeroDamaged>(OnHeroDamaged);
 			scoreText.text = totalScore.value.ToString(CultureInfo.CurrentCulture);
 			combo.SetActive(false);
 			comboDuration = comboValues.duration;
+		}
+
+		private void OnHeroDamaged()
+		{
+			ResetCombo();
+		}
+
+		private void ResetCombo()
+		{
+			comboValues.currentKillAmount = 0;
+			comboValues.currentMultiplier = COMBO_MIN_VALUE;
+			comboDuration = comboValues.duration;
+			comboValues.isActive = false;
+			combo.SetActive(false);
+		}
+
+		private void AddCComboMultiplier()
+		{
+			combo.SetActive(true);
+			comboValues.isActive = true;
+			comboValues.currentKillAmount = 0;
+			comboValues.currentMultiplier = Mathf.Clamp(++comboValues.currentMultiplier, COMBO_MIN_VALUE , comboValues.maxMultiplier);
+			comboText.text = comboValues.currentMultiplier.ToString(CultureInfo.CurrentCulture);
 		}
 
 		private void OnScoreEvent(ScoreEvent gameEvent)
@@ -57,11 +82,7 @@ namespace CalongeCore.ScoreManager
 
 			if (comboValues.currentKillAmount >= comboValues.increaseMultiplierAt)
 			{
-				combo.SetActive(true);
-				comboValues.isActive = true;
-				comboValues.currentKillAmount = 0;
-				comboValues.currentMultiplier = Mathf.Clamp(++comboValues.currentMultiplier, COMBO_MIN_VALUE , comboValues.maxMultiplier);
-				comboText.text = comboValues.currentMultiplier.ToString(CultureInfo.CurrentCulture);
+				AddCComboMultiplier();
 			}
 		}
 
@@ -75,11 +96,7 @@ namespace CalongeCore.ScoreManager
 
 				if (comboDuration <= 0)
 				{
-					comboValues.currentKillAmount = 0;
-					comboValues.currentMultiplier = COMBO_MIN_VALUE;
-					comboDuration = comboValues.duration;
-					comboValues.isActive = false;
-					combo.SetActive(false);
+					ResetCombo();
 				}
 			}
 		}

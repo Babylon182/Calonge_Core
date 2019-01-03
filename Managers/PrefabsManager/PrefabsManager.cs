@@ -16,20 +16,25 @@ namespace CalongeCore.ParticleManager
         protected override void Awake()
         {
             base.Awake();
-            EventsManager.SubscribeToEvent<ParticleEvent>(PlaceParticle);
+            EventsManager.SubscribeToEvent<ParticleEvent>(OnParticleEvent);
             FillDictionary();
         }
 
-        private void PlaceParticle(ParticleEvent gameEvent)
+        private void OnDestroy()
+        {
+            EventsManager.UnsubscribeToEvent<ParticleEvent>(OnParticleEvent);
+        }
+
+        private void OnParticleEvent(ParticleEvent gameEvent)
         {
             CreatePrefab(gameEvent.id, gameEvent.position, gameEvent.rotation);
         }
 
         private void FillDictionary()
         {
-            for (int i = prefabsDictionary.dictionary.Length - 1; i >= 0; i--)
+            for (int i = prefabsDictionary.allPrefabsTuples.Length - 1; i >= 0; i--)
             {
-                var currentC = prefabsDictionary.dictionary[i];
+                var currentC = prefabsDictionary.allPrefabsTuples[i];
 
                 if (!allPrefabs.ContainsKey(currentC.id))
                 {
@@ -37,7 +42,7 @@ namespace CalongeCore.ParticleManager
                 }
                 else
                 {
-                    Debug.Log($"<color=red>HEY FUCKER, You already have the key <color=blue>{currentC.id}</color> in the " +
+                    Debug.Log($"<color=red>HEY FUCKER, Prefabs Manager Here. You already have the key <color=blue>{currentC.id}</color> in the " +
                               $"Dictionary at index <color=blue>{i}</color>. PLEASE REMOVE IT.</color>");
                 }
             }
@@ -59,15 +64,17 @@ namespace CalongeCore.ParticleManager
         public PrefabID id;
         public Vector3 position;
         public Quaternion rotation;
+
+        public ParticleEvent(PrefabID id, Vector3 position, Quaternion rotation)
+        {
+            this.id = id;
+            this.position = position;
+            this.rotation = rotation;
+        }
     } 
-
-    [Serializable]
-    public struct PrefabTuple
-    {
-        public PrefabID id;
-        public GameObject prefab;
-    }
-
+    
+    //TODO OBVIAMENTE ESTO ESTA COMPLETAMENTE MAL, EL ENUM NO PUEDE ESTAR EN EL CALONGE CORE. ENCONTRAR UNA MANERA DE
+    //TODO QUE SEA LOCAL
     public enum PrefabID
     {
         HeroDeath = 0,

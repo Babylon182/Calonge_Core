@@ -8,7 +8,9 @@ namespace CalongeCore.SoundManager
     //TODO HACER MI PROPIO SOUND MANAGER O POR LO MENOS REFACTORIZAR ESTE
     public class SoundManager : Singleton<SoundManager>
     {
-        public Sounds[] sounds; //lista de sonidos
+        [SerializeField]
+        private SoundsDictionary soundsDictionary;
+        
         public int channelAmount;
         private Dictionary<SoundID, AudioClip> dictionary = new Dictionary<SoundID, AudioClip>();
         private List<AudioSource> channels = new List<AudioSource>(); //canales de Audio
@@ -17,7 +19,7 @@ namespace CalongeCore.SoundManager
         protected override void Awake()
         {
             base.Awake();
-            EventsManager.SubscribeToEvent<SoundEvent>(StartSound);
+            EventsManager.SubscribeToEvent<SoundEvent>(OnSoundEvent);
             channelsGo = new GameObject("AUDIO CHANNELS");
             channelsGo.transform.parent = transform;
 
@@ -27,6 +29,25 @@ namespace CalongeCore.SoundManager
             }
 
             FillDictionary();
+        }
+        
+        private void OnDestroy()
+        {
+            EventsManager.UnsubscribeToEvent<SoundEvent>(OnSoundEvent);
+        }
+
+        void FillDictionary()
+        {
+            for (int i = soundsDictionary.allSoundsTuples.Length - 1; i >= 0; i--)
+            {
+                var currentC = soundsDictionary.allSoundsTuples[i];
+                dictionary.Add(currentC.id, currentC.audioClip);
+            }
+        }
+
+        private void OnSoundEvent(SoundEvent gameEvent)
+        {
+            Play(gameEvent.id, gameEvent.position);
         }
 
         public bool Play(SoundID soundID, Vector3 position, float vol = 1, bool loop = false)
@@ -44,20 +65,18 @@ namespace CalongeCore.SoundManager
             return true;
         }
 
-        private void StartSound(SoundEvent gameEvent)
+        public bool Stop(SoundID soundID)
         {
-            Play(gameEvent.id, gameEvent.position);
-        }
+            if (dictionary[soundID] == null) return false;
 
-        void FillDictionary()
-        {
-            for (int i = sounds.Length - 1; i >= 0; i--)
-            {
-                var currentC = sounds[i];
-                dictionary.Add(currentC.id, currentC.audioClip);
-            }
+            AudioSource channel = GetBusyChannel(dictionary[soundID]);
 
-            sounds = null;
+            if (channel == null) return false;
+
+            channel.Stop();
+            channel.clip = null;
+
+            return true;
         }
 
         private AudioSource MakeChannel()
@@ -79,7 +98,7 @@ namespace CalongeCore.SoundManager
             return MakeChannel();
         }
 
-        private AudioSource _GetBusyChannel(AudioClip source)
+        private AudioSource GetBusyChannel(AudioClip source)
         {
             for (int i = channels.Count - 1; i >= 0; i--)
             {
@@ -88,21 +107,6 @@ namespace CalongeCore.SoundManager
             }
 
             return null;
-        }
-
-
-        public bool Stop(SoundID soundID)
-        {
-            if (dictionary[soundID] == null) return false;
-
-            AudioSource channel = _GetBusyChannel(dictionary[soundID]);
-
-            if (channel == null) return false;
-
-            channel.Stop();
-            channel.clip = null;
-
-            return true;
         }
     }
 
