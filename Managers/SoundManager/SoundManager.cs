@@ -114,6 +114,22 @@ namespace CalongeCore.SoundManager
     {
         public SoundID id;
         public Vector3 position;
+        public float vol;
+        public bool loop;
+
+        public SoundEvent(SoundID id, Vector3 position)
+        {
+            this.id = id;
+            this.position = position;
+        }
+        
+        public SoundEvent(SoundID id, Vector3 position, float vol, bool loop)
+        {
+            this.id = id;
+            this.position = position;
+            this.vol = vol;
+            this.loop = loop;
+        }
     }
 
     [Serializable]
@@ -125,6 +141,11 @@ namespace CalongeCore.SoundManager
 
     public enum SoundID
     {
+        HeroDeath = 0,
+        EnemyDeath = 1,
+        
+        HeroBasicWeapon = 10,
+        
         None
     }
 }
