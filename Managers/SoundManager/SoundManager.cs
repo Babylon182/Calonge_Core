@@ -139,6 +139,8 @@ namespace CalongeCore.SoundManager
         public AudioClip audioClip;
     }
 
+    //TODO OBVIAMENTE ESTO ESTA COMPLETAMENTE MAL, EL ENUM NO PUEDE ESTAR EN EL CALONGE CORE. ENCONTRAR UNA MANERA DE QUE
+    //TODO QUE SEA LOCAL
     public enum SoundID
     {
         HeroDeath = 0,
