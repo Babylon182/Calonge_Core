@@ -2,19 +2,18 @@
 using System.Collections.Generic;
 using System;
 using CalongeCore.Events;
+using CalongeCore.Managers;
 
 namespace CalongeCore.SoundManager
 {
-    //TODO HACER MI PROPIO SOUND MANAGER O POR LO MENOS REFACTORIZAR ESTE
-    public class SoundManager : Singleton<SoundManager>
+    public class SoundManager : SingletonWithDictionary<SoundManager, SoundID, AudioClip>
     {
         [SerializeField]
         private SoundsDictionary soundsDictionary;
-        
-        public int channelAmount;
-        private Dictionary<SoundID, AudioClip> dictionary = new Dictionary<SoundID, AudioClip>();
-        private List<AudioSource> channels = new List<AudioSource>(); //canales de Audio
+
+        private List<AudioSource> channels = new List<AudioSource>();
         private GameObject channelsGo;
+        public int channelAmount;
 
         protected override void Awake()
         {
@@ -27,21 +26,28 @@ namespace CalongeCore.SoundManager
             {
                 MakeChannel();
             }
-
-            FillDictionary();
         }
-        
+
         private void OnDestroy()
         {
             EventsManager.UnsubscribeToEvent<SoundEvent>(OnSoundEvent);
         }
 
-        void FillDictionary()
+        public override void FillDictionary()
         {
-            for (int i = soundsDictionary.allSoundsTuples.Length - 1; i >= 0; i--)
+            for (int index = soundsDictionary.allSoundsTuples.Length - 1; index >= 0; index--)
             {
-                var currentC = soundsDictionary.allSoundsTuples[i];
-                dictionary.Add(currentC.id, currentC.audioClip);
+                var currentC = soundsDictionary.allSoundsTuples[index];
+                if (!dictionary.ContainsKey(currentC.id))
+                {
+                    dictionary.Add(currentC.id, currentC.audioClip);
+                }
+#if UNITY_EDITOR
+                else
+                {
+                    LogWarningRepeatedElement(currentC.id.ToString(), index);
+                }
+#endif
             }
         }
 
