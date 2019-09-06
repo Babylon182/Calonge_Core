@@ -62,11 +62,20 @@ namespace CalongeCore.ParticleManager
         public Vector3 position;
         public Quaternion rotation;
 
+        public ParticleEvent()
+        {
+        }
+
         public ParticleEvent(PrefabID id, Vector3 position, Quaternion rotation)
         {
             this.id = id;
             this.position = position;
             this.rotation = rotation;
+        }
+
+        public void Reset()
+        {
+
         }
     } 
     

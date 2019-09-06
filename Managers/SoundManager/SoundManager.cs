@@ -123,18 +123,27 @@ namespace CalongeCore.SoundManager
         public float vol;
         public bool loop;
 
+        public SoundEvent()
+        {
+        }
+
         public SoundEvent(SoundID id, Vector3 position)
         {
             this.id = id;
             this.position = position;
         }
-        
+
         public SoundEvent(SoundID id, Vector3 position, float vol, bool loop)
         {
             this.id = id;
             this.position = position;
             this.vol = vol;
             this.loop = loop;
+        }
+
+        public void Reset()
+        {
+            
         }
     }
 

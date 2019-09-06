@@ -4,6 +4,7 @@ using CalongeCore.Events;
 using Events;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 namespace CalongeCore.ScoreManager
 {
@@ -13,13 +14,13 @@ namespace CalongeCore.ScoreManager
 		private FloatVariable totalScore;
 		
 		[SerializeField]
-		private Text scoreText;
+		private TextMeshProUGUI scoreText;
 		
 		[SerializeField]
 		private GameObject combo;
 		
 		[SerializeField]
-		private Text comboText;
+		private TextMeshProUGUI comboText;
 		
 		[SerializeField]
 		private Image comboMeter;
@@ -117,11 +118,20 @@ namespace CalongeCore.ScoreManager
 	{
 		public float points;
 
-		public ScoreEvent(float points)
+        public ScoreEvent()
+        {
+        }
+
+        public ScoreEvent(float points)
 		{
 			this.points = points;
 		}
-	}
+
+        public void Reset()
+        {
+            
+        }
+    }
 
 	[Serializable]
 	public class ComboValues
