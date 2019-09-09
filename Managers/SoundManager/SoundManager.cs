@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System;
 using CalongeCore.Events;
 using CalongeCore.Managers;
+using UnityEngine.Audio;
 
 namespace CalongeCore.SoundManager
 {
@@ -11,15 +12,21 @@ namespace CalongeCore.SoundManager
         [SerializeField]
         private SoundsDictionary soundsDictionary;
 
+        [SerializeField]
+        private AudioMixerGroup defaultAudioMixer;
+
         private List<AudioSource> channels = new List<AudioSource>();
         private GameObject channelsGo;
         public int channelAmount;
+
+        private const string AUDIO_CHANNELS = "AUDIO CHANNELS";
+        private const string CHANNELS = "Channel";
 
         protected override void Awake()
         {
             base.Awake();
             EventsManager.SubscribeToEvent<SoundEvent>(OnSoundEvent);
-            channelsGo = new GameObject("AUDIO CHANNELS");
+            channelsGo = new GameObject(AUDIO_CHANNELS);
             channelsGo.transform.parent = transform;
 
             for (int i = 0; i < channelAmount; i++)
@@ -87,8 +94,9 @@ namespace CalongeCore.SoundManager
 
         private AudioSource MakeChannel()
         {
-            var newAudioSource = new GameObject("Channel").AddComponent<AudioSource>();
+            var newAudioSource = new GameObject(CHANNELS).AddComponent<AudioSource>();
             newAudioSource.transform.parent = channelsGo.transform;
+            newAudioSource.outputAudioMixerGroup = defaultAudioMixer;
             channels.Add(newAudioSource);
             return newAudioSource;
         }
